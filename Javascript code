@@ -1,0 +1,73 @@
+document.addEventListener("DOMContentLoaded", function() {
+    const audioPlayer = document.getElementById("audioPlayer");
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const volumeControl = document.getElementById("volumeControl");
+    const playlist = document.getElementById("playlist");
+
+    let currentTrackIndex = 0;
+    const playlistData = [
+        { title: "Song 1", src: "song1.mp3" },
+        { title: "Song 2", src: "song2.mp3" },
+        { title: "Song 3", src: "song3.mp3" }
+    ];
+
+    // Populate playlist
+    playlistData.forEach((track, index) => {
+        const listItem = document.createElement("div");
+        listItem.classList.add("playlist-item");
+        listItem.textContent = track.title;
+        listItem.addEventListener("click", () => {
+            loadTrack(index);
+        });
+        playlist.appendChild(listItem);
+    });
+
+    // Load initial track
+    loadTrack(currentTrackIndex);
+
+    function loadTrack(index) {
+        const track = playlistData[index];
+        audioPlayer.src = track.src;
+        audioPlayer.play();
+        playPauseBtn.textContent = "Pause";
+        currentTrackIndex = index;
+        highlightCurrentTrack();
+    }
+
+    function highlightCurrentTrack() {
+        const playlistItems = document.querySelectorAll(".playlist-item");
+        playlistItems.forEach((item, index) => {
+            if (index === currentTrackIndex) {
+                item.classList.add("current-track");
+            } else {
+                item.classList.remove("current-track");
+            }
+        });
+    }
+
+    playPauseBtn.addEventListener("click", () => {
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+            playPauseBtn.textContent = "Pause";
+        } else {
+            audioPlayer.pause();
+            playPauseBtn.textContent = "Play";
+        }
+    });
+
+    prevBtn.addEventListener("click", () => {
+        currentTrackIndex = (currentTrackIndex - 1 + playlistData.length) % playlistData.length;
+        loadTrack(currentTrackIndex);
+    });
+
+    nextBtn.addEventListener("click", () => {
+        currentTrackIndex = (currentTrackIndex + 1) % playlistData.length;
+        loadTrack(currentTrackIndex);
+    });
+
+    volumeControl.addEventListener("input", () => {
+        audioPlayer.volume = volumeControl.value;
+    });
+});
